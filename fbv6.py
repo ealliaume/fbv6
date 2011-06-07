@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: iso-8859-1 -*- 
 import cookielib, os, urllib, urllib2, re
 
 dic = {'Kio':1024,
@@ -58,7 +60,7 @@ class fb(object):
         elif template=="conn_dsl_stats":
         	self.conn_dsl_stats()
         elif template=="net_ethsw_stats_1":
-            self.net_ethsw_stats("1")
+	        self.net_ethsw_stats("1")
         elif template=="net_ethsw_stats_2":
         	self.net_ethsw_stats("2")
         elif template=="net_ethsw_stats_3":
@@ -93,7 +95,7 @@ class fb(object):
         return ''.join(response.readlines())	
 
     def net_ethsw_stats(self,port):
- 		self.list_value(["<div id=\"port","Paquet","Octet","bit instantan"],"net_ethsw_stats",":",port)
+ 	self.list_value(["<div id=\"port","Paquet","Octet","bit instantan"],"net_ethsw_stats",":",port)
 
     def conn_status(self):
     	self.list_value(["<span"],"conn_status"," ","")
@@ -139,22 +141,38 @@ class fb(object):
 								voie=name+"_montante:"
     				else:
 	    				if len(item) == 1 and item[0]!='':
-	    					end=end+self.calcNetwork(item[0])+' '
+	    					end=end+self.calcNetwork(item[0])+" "
 	    				elif len(item) == 2:
-	    					end=end+item[0]+":"+self.calcNetwork(item[1])+' '
+	    					end=end+item[0]+":"+self.calcNetwork(item[1])+" "
 	    				elif len(item) == 3:
 						value=self.calcNetwork(item[2])
 						if "." not in value:
-							end=end+item[1]+':'+value+' '
+							end=end+item[1]+":"+value+" "
 	    				elif len(item) == 4:
 						name=item[1]
 						value=self.calcNetwork(item[2])
 						value2=self.calcNetwork(item[3])
 						if self.isInt(value) is True:
-	    						end=end+item[1]+':'+self.calcNetwork(item[2])+' '
-	    						end=end+item[1]+'_2:'+self.calcNetwork(item[3])+' '			
-	print end    
-    	
+	    						end=end+item[1]+":"+self.calcNetwork(item[2])+" "
+	    						end=end+item[1]+"_2:"+self.calcNetwork(item[3])+" "			
+	#mydes = open('/tmp/toto', 'w')    
+	#mydes.write(end)
+	if end[-1:]==" ":
+		final=""
+		number=0
+		number2=0
+		for i in end:
+			number=number+1
+		for i in end:
+			if number2==number-1:
+				print final
+			else:
+				number2=number2+1
+				final=final+i
+	else:
+		print end
+	#print "bytesdown:2276332667 bytesup:1599875318 ratedown:1000 ratedown_2:2230000 rateup:0 rateup_2:11500 "    
+	
     def isInt(self,num):
     		try: 
         		int(num)
@@ -187,6 +205,9 @@ class fb(object):
 		item = item.replace('<span>','')
 		item = item.replace('<h2>','')
 		item = item.replace('Freebox','')
+		item = item.replace('é','e')
+		item = item.replace('Ã©','e')
+		item = item.replace('Ã','e')
 		return str(item)
 
     def calcNetwork(self,chain):
