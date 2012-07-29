@@ -32,7 +32,7 @@ dic = {'Kio':1024,
 	 'Po':1000000000000000}
 
 class fb(object):
-    def __init__(self, login, passwd, url, template):
+    def __init__(self, login, passwd, url):
         cookie_filename = "/tmp/fb.cookies"
         self.login = login
         self.passwd = passwd
@@ -53,38 +53,15 @@ class fb(object):
 
         self.login_fb()
         self.cj.save()
-        if template=="conn_status":
-        	self.conn_status()
-        elif template=="wifi_client_station":
-        	self.wifi_client_station()
-        elif template=="conn_dsl_stats":
-        	self.conn_dsl_stats()
-        elif template=="net_ethsw_stats_1":
-	        self.net_ethsw_stats("1")
-        elif template=="net_ethsw_stats_2":
-        	self.net_ethsw_stats("2")
-        elif template=="net_ethsw_stats_3":
-        	self.net_ethsw_stats("3")
-        elif template=="net_ethsw_stats_4":        
-        	self.net_ethsw_stats("4")
-        elif template=="net_dhcp_leases":
-        	self.net_dhcp_leases()
-        elif template=="nas":
-        	self.nas()
-        elif template=="phone_status":
-        	self.phone_status()
-        elif template=="all":
-        	self.conn_status()
-        	self.wifi_client_station()
-        	self.conn_dsl_stats()
-        	self.net_ethsw_stats("1")
-        	self.net_ethsw_stats("2")
-        	self.net_ethsw_stats("3")
-        	self.net_ethsw_stats("4")
-        	self.nas()
-        	self.phone_status()   
-        else:
-        	print "-t conn_status | wifi_client_station | conn_dsl_stats | net_ethsw_stats | phone_status | nas | net_dhcp_leases | all"
+        self.conn_status()
+        self.wifi_client_station()
+        self.conn_dsl_stats()
+        self.net_ethsw_stats("1")
+        self.net_ethsw_stats("2")
+        self.net_ethsw_stats("3")
+        self.net_ethsw_stats("4")
+        self.nas()
+        self.phone_status()   
 
     def login_fb(self):
         login_data = urllib.urlencode({

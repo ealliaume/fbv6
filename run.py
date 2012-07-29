@@ -3,15 +3,12 @@ from optparse import OptionParser
 
 def main():
         # http://docs.python.org/library/optparse.html
-        utilisation = "utilisation : python  *.py -t template_name"
+        utilisation = "utilisation : python  *.py -p password"
         parser = OptionParser(utilisation)
-        parser.add_option("-t", dest="template",help="name of template")
+        parser.add_option("-p", dest="password",help="password")
         (options, args) = parser.parse_args()
-        fb_template = options.template
-        if  options.template is not None:
-		fb("freebox", FREEBOX_PASSWORD, "http://mafreebox.freebox.fr/", fb_template)
-        else:
-		parser.print_help()
+        fb_password = options.password
+	fb("freebox", fb_password, "http://mafreebox.freebox.fr/")
 
 if __name__ == "__main__":
         main()		
