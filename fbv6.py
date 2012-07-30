@@ -53,15 +53,15 @@ class fb(object):
 
         self.login_fb()
         self.cj.save()
-        self.conn_status()
-        self.wifi_client_station()
-        self.conn_dsl_stats()
-        self.net_ethsw_stats("1")
-        self.net_ethsw_stats("2")
-        self.net_ethsw_stats("3")
-        self.net_ethsw_stats("4")
-        self.nas()
-        self.phone_status()   
+#        self.conn_status()
+#        self.wifi_client_station()
+#        self.conn_dsl_stats()
+#        self.net_ethsw_stats("1")
+#        self.net_ethsw_stats("2")
+#        self.net_ethsw_stats("3")
+#        self.net_ethsw_stats("4")
+#        self.nas()
+#        self.phone_status()   
 
     def login_fb(self):
         login_data = urllib.urlencode({
