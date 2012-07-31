@@ -54,6 +54,7 @@ class httpRequest(object):
         self.login_fb()
         self.cj.save()
     	self.list_value("conn_status")
+    	self.list_value("net_ethsw_stats")
 
     def login_fb(self):
         login_data = urllib.urlencode({
