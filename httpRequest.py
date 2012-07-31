@@ -18,12 +18,12 @@ dic = {'Kio':1024,
 	 'ebit':1152921504606846976,
 	 'zbit':1180591620717411303424,
 	 'ybit':1208925819614629174706176,
-	 'octets':0,
-	 'Paquet':0,
-	 'Paquets':0,
-	 'paquet':0,
-	 'paquets':0,
-	 'dB':0,
+	 'octets':1,
+	 'Paquet':1,
+	 'Paquets':1,
+	 'paquet':1,
+	 'paquets':1,
+	 'dB':1,
 	 'Ko':1000,
 	 'ko':1000,
 	 'Mo':1000000,
@@ -54,7 +54,7 @@ class httpRequest(object):
         self.login_fb()
         self.cj.save()
     	self.list_value("conn_status")
-    	self.list_value("net_ethsw_stats")
+    	self.list_switch("net_ethsw_stats")
 
     def login_fb(self):
         login_data = urllib.urlencode({
@@ -64,16 +64,25 @@ class httpRequest(object):
         response = self.opener.open(self.url+"login.php", login_data)
         return ''.join(response.readlines())	
 
+    
+    def list_switch(self,end_url):
+	response = repr(self.opener.open(self.url+"settings.php?page="+end_url).read())
+	net_ethsw_stats_regexp='(port_[1-4]_counters).+?(instantan.+?)[ :]+(.+?)[ ](.+?)/s+.+?(instantan.+?)[ :]+(.+?)[ ](.+?)/s+'
+	net_ethsw_stats= re.findall(net_ethsw_stats_regexp,response)
+	for j in [0,1,2,3]:
+		print net_ethsw_stats[j][0]+"_in "+self.calcNetwork(net_ethsw_stats[j][2],net_ethsw_stats[j][3])
+		print net_ethsw_stats[j][0]+"_in "+self.calcNetwork(net_ethsw_stats[j][5],net_ethsw_stats[j][6])
+
     def list_value(self,end_url):
 	response = self.opener.open(self.url+"settings.php?page="+end_url)
+	port=0
     	for line in response:
-		urls = re.findall(r'id=[\'"]?([^\'" >]+).*?>(.*?)<', line)
+                urls = re.findall(r'id=[\'"]?([^\'" >]+).*?>(.*?)<', line)
 		if urls is not None and urls != []:
-			#print urls
 			name=urls[0][0]
 			value=urls[0][1]
-			flow = re.findall(r'([1-9]+)[ ]([A-Za-z]+)[\/][s][ (]+max[ ]([1-9,]+)[ ]([A-Za-z]+)', value)
-			flow2 = re.findall(r'([1-9,]+)[ ]([A-Za-z]+)', value)
+			flow = re.findall(r'([0-9]+)[ ]([A-Za-z]+)[\/][s][ (]+max[ ]([0-9,]+)[ ]([A-Za-z]+)', value)
+			flow2 = re.findall(r'([0-9,]+)[ ]([A-Za-z]+)', value)
 			if flow != []:
 				n=0
 				for i in flow[0]:
