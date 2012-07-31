@@ -55,6 +55,7 @@ class httpRequest(object):
         self.cj.save()
     	self.list_value("conn_status")
     	self.list_switch("net_ethsw_stats")
+    	self.list_nas("nas")
 
     def login_fb(self):
         login_data = urllib.urlencode({
@@ -73,6 +74,13 @@ class httpRequest(object):
 		print net_ethsw_stats[j][0]+"_in "+self.calcNetwork(net_ethsw_stats[j][2],net_ethsw_stats[j][3])
 		print net_ethsw_stats[j][0]+"_in "+self.calcNetwork(net_ethsw_stats[j][5],net_ethsw_stats[j][6])
 
+    def list_nas(self,end_url):
+	response = repr(self.opener.open(self.url+"settings.php?page="+end_url).read())
+	nas_regexp='(Espace.+?)[: ]+(.+?)[ ]([A-Za-z]+)<br/>.+?'
+	nas= re.findall(nas_regexp,response)
+	for j in [0,1]:
+		print nas[j][0]+" "+self.calcNetwork(nas[j][1],nas[j][2])
+
     def list_value(self,end_url):
 	response = self.opener.open(self.url+"settings.php?page="+end_url)
 	port=0
@@ -84,15 +92,8 @@ class httpRequest(object):
 			flow = re.findall(r'([0-9]+)[ ]([A-Za-z]+)[\/][s][ (]+max[ ]([0-9,]+)[ ]([A-Za-z]+)', value)
 			flow2 = re.findall(r'([0-9,]+)[ ]([A-Za-z]+)', value)
 			if flow != []:
-				n=0
-				for i in flow[0]:
-					if n==0:
-						flow=i
-						n=1
-					elif n==1:
-						value=self.calcNetwork(flow,i)
-						n=0
-						print name+" "+value
+				print name+" "+self.calcNetwork(flow[0][0],flow[0][1])
+				print name+"_full "+self.calcNetwork(flow[0][2],flow[0][3])
 			elif flow2 != []:
 				value=self.calcNetwork(flow2[0][0],flow2[0][1])
 				print name+" "+value
