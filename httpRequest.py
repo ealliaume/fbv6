@@ -53,7 +53,7 @@ class httpRequest(object):
 
         self.login_fb()
         self.cj.save()
-        self.conn_status()
+    	self.list_value("conn_status")
 
     def login_fb(self):
         login_data = urllib.urlencode({
@@ -63,91 +63,32 @@ class httpRequest(object):
         response = self.opener.open(self.url+"login.php", login_data)
         return ''.join(response.readlines())	
 
-    def conn_status(self):
-    	self.list_value(["<span"],"conn_status"," ","")
-
-    def list_value(self,search_list,end_url,split,port):
-	end=""
-	voie=""
+    def list_value(self,end_url):
 	response = self.opener.open(self.url+"settings.php?page="+end_url)
     	for line in response:
-    	    for search in search_list:
-    			if search in line:
-				print line
-    				item = self.replaceFb(line).split(split)
-				print len(item)
-	    			if len(item) == 1 and item[0]!='':
-	    				end=end+self.calcNetwork(item[0])+" "
-	    			elif len(item) == 2:
-	    				end=end+item[0]+":"+self.calcNetwork(item[1])+" "
-	    			elif len(item) == 3:
-					value=self.calcNetwork(item[2])
-					if "." not in value:
-						end=end+item[1]+":"+value+" "
-	    			elif len(item) == 4:
-					name=item[1]
-					value=self.calcNetwork(item[2])
-					value2=self.calcNetwork(item[3])
-					if self.isInt(value) is True:
-	    					end=end+item[1]+":"+self.calcNetwork(item[2])+" "
-	    					end=end+item[1]+"_2:"+self.calcNetwork(item[3])+" "			
-	if end[-1:]==" ":
-		final=""
-		number=0
-		number2=0
-		for i in end:
-			number=number+1
-		for i in end:
-			if number2==number-1:
-				print final
-			else:
-				number2=number2+1
-				final=final+i
-	else:
-		print end
+		urls = re.findall(r'id=[\'"]?([^\'" >]+).*?>(.*?)<', line)
+		if urls is not None and urls != []:
+			#print urls
+			name=urls[0][0]
+			value=urls[0][1]
+			flow = re.findall(r'([1-9]+)[ ]([A-Za-z]+)[\/][s][ (]+max[ ]([1-9,]+)[ ]([A-Za-z]+)', value)
+			flow2 = re.findall(r'([1-9,]+)[ ]([A-Za-z]+)', value)
+			if flow != []:
+				n=0
+				for i in flow[0]:
+					if n==0:
+						flow=i
+						n=1
+					elif n==1:
+						value=self.calcNetwork(flow,i)
+						n=0
+						print name+" "+value
+			elif flow2 != []:
+				value=self.calcNetwork(flow2[0][0],flow2[0][1])
+				print name+" "+value
+			elif value != "":
+				print name+" "+value
 
-    def isInt(self,num):
-    		try: 
-        		int(num)
-        		return True
-    		except ValueError:
-        		return False
-
-    def replaceFb(self,chain):
-		item = chain.replace(' ','')
-		item = item.replace('<li>','')
-		item = item.replace(':<spanid=\"conn',' ')
-		item = item.replace('\"val=\"',' ')
-		item = item.replace('</span>','')
-		item = item.replace('</li>','')
-		item = item.replace('\">',' ')
-		item = item.replace('/s','')
-		item = item.replace('(','')
-		item = item.replace(')','')
-		item = item.replace('\n','')
-		item = item.replace('\t','')
-		item = item.replace('_','')
-		item = item.replace('<th>','')
-		item = item.replace('</th>','')
-		item = item.replace('<td>','')
-		item = item.replace('</td>','')
-		item = item.replace('max',' ')
-		item = item.replace('<br/>','')
-		item = item.replace('<divid=\"','')
-		item = item.replace('/','')
-		item = item.replace('<span>','')
-		item = item.replace('<h2>','')
-		item = item.replace('Freebox','')
-		item = item.replace('é','e')
-		item = item.replace('Ã©','e')
-		item = item.replace('Ã','e')
-		return str(item)
-
-    def calcNetwork(self,chain):
-		unity=re.sub("\d", "", chain).replace(",","")
-		if unity in dic.keys():
-			value=float(chain.replace(unity,'').replace(",","."))*dic[unity]
-			end=int(round(value)) 
-		else:
-			end=chain 	
-		return str(end)
+    def calcNetwork(self,flow,unity):
+	flow = float(flow.replace(",","."))
+	return str(int(round(flow*dic[unity])))
