@@ -1,6 +1,5 @@
 from httpRequest import httpRequest
 from optparse import OptionParser
-from freeboxParsing import freeboxParsing
 
 def main():
         # http://docs.python.org/library/optparse.html
