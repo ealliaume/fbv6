@@ -56,6 +56,7 @@ class httpRequest(object):
     	self.list_value("conn_status")
     	self.list_switch("net_ethsw_stats")
     	self.list_nas("nas")
+    	self.list_misc_system("misc_system")
 
     def login_fb(self):
         login_data = urllib.urlencode({
@@ -73,6 +74,15 @@ class httpRequest(object):
 	for j in [0,1,2,3]:
 		print net_ethsw_stats[j][0]+"_in "+self.calcNetwork(net_ethsw_stats[j][2],net_ethsw_stats[j][3])
 		print net_ethsw_stats[j][0]+"_in "+self.calcNetwork(net_ethsw_stats[j][5],net_ethsw_stats[j][6])
+
+    def list_misc_system(self,end_url):
+	response = repr(self.opener.open(self.url+"settings.php?page="+end_url).read())
+	regexp ='<li>(.+?)[: ]+<spa.+?>(.+?)</span></li>'
+	data = re.findall(regexp,response)
+	i=0
+	while i < 7:
+		i=i+1
+		print data[i][0].replace(' ','_')+" "+data[i][1].split(" ")[0]
 
     def list_nas(self,end_url):
 	response = repr(self.opener.open(self.url+"settings.php?page="+end_url).read())
